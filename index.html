@@ -15,6 +15,12 @@
     --ink:#3d2b1f;
     --accent:#c97b4a;
     --shadow:rgba(95,61,38,.25);
+    --study-wood:#6f7a52;
+    --study-light:#a3ab7f;
+    --study-dark:#43502e;
+    --study-accent:#7a8b4f;
+    --study-paper:#fbf8ef;
+    --study-shadow:rgba(67,80,46,.22);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{
@@ -25,150 +31,193 @@
       radial-gradient(circle at 80% 85%, #f3e2c8 0, transparent 45%),
       var(--wall);
     color:var(--ink);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
     padding:32px 20px 48px;
   }
+  .wrap{max-width:960px;margin:0 auto;}
 
-  /* ===== 玄关 ===== */
-  .house{
-    width:100%;
-    max-width:960px;
-  }
-  .roof{
-    text-align:center;
-    margin-bottom:8px;
-  }
+  /* ================= 视图切换 ================= */
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ================= 玄关 ================= */
+  .house{width:100%;max-width:960px;margin:0 auto;}
+  .roof{text-align:center;margin-bottom:8px;}
   .roof .gable{
     font-size:13px;letter-spacing:.5em;color:var(--wood);
     text-transform:uppercase;
   }
   .house-title{
     font-size:clamp(28px,5vw,40px);
-    font-weight:800;
-    color:var(--wood-dark);
-    margin:6px 0 4px;
-    letter-spacing:.12em;
+    font-weight:800;color:var(--wood-dark);
+    margin:6px 0 4px;letter-spacing:.12em;
   }
-  .house-sub{
-    color:#7a6248;
-    font-size:15px;
-  }
+  .house-sub{color:#7a6248;font-size:15px;}
 
   .floor{
     margin-top:32px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:28px;
+    display:grid;grid-template-columns:1fr 1fr;gap:28px;
   }
   @media (max-width:680px){
     .floor{grid-template-columns:1fr;gap:20px;}
   }
 
-  /* 房间门卡 */
+  /* 房间门卡：原生 a 包裹整卡，任意位置可点 */
   .room{
     position:relative;
+    display:flex;flex-direction:column;
     background:var(--paper);
     border:2px solid var(--wood-light);
     border-radius:22px;
     padding:28px 26px 24px;
-    text-decoration:none;
-    color:var(--ink);
+    text-decoration:none;color:var(--ink);
     box-shadow:0 10px 24px var(--shadow);
     transition:transform .25s ease, box-shadow .25s ease;
-    overflow:hidden;
-    min-height:300px;
-    display:flex;
-    flex-direction:column;
+    overflow:hidden;min-height:300px;
   }
   .room:hover{
     transform:translateY(-6px);
     box-shadow:0 18px 34px var(--shadow);
   }
   .room::before{
-    content:"";
-    position:absolute;
-    inset:0;
+    content:"";position:absolute;top:0;left:0;right:0;bottom:0;
     background:linear-gradient(160deg, transparent 60%, rgba(185,133,92,.12));
     pointer-events:none;
   }
-  /* 整卡点击层：覆盖在卡片上，保证任意位置点击都能跳转 */
-  .room-link{
-    position:absolute;inset:0;z-index:1;
-    border-radius:inherit;
-  }
-  .room-body{
-    position:relative;z-index:2;
-    display:flex;flex-direction:column;flex:1;
-    pointer-events:none;
-  }
-
   .room-icon{
-    width:72px;height:72px;
-    border-radius:18px;
+    width:72px;height:72px;border-radius:18px;
     display:flex;align-items:center;justify-content:center;
-    font-size:36px;
-    background:var(--wall-dark);
-    margin-bottom:18px;
+    font-size:36px;background:var(--wall-dark);margin-bottom:18px;
   }
   .room.office .room-icon{background:#f6e3d2;}
   .room.study  .room-icon{background:#e3ead9;}
-
   .room-tag{
-    display:inline-block;
-    font-size:12px;letter-spacing:.2em;
-    color:var(--accent);
-    border:1px solid var(--accent);
-    border-radius:999px;
-    padding:3px 12px;
-    margin-bottom:12px;
+    display:inline-block;font-size:12px;letter-spacing:.2em;
+    color:var(--accent);border:1px solid var(--accent);
+    border-radius:999px;padding:3px 12px;margin-bottom:12px;
     align-self:flex-start;
   }
-  .room-name{
-    font-size:24px;font-weight:700;color:var(--wood-dark);
-    margin-bottom:10px;
-  }
-  .room-desc{
-    font-size:14px;line-height:1.8;color:#6b5742;
-    flex:1;
-  }
+  .room-name{font-size:24px;font-weight:700;color:var(--wood-dark);margin-bottom:10px;}
+  .room-desc{font-size:14px;line-height:1.8;color:#6b5742;flex:1;}
   .room-count{
-    margin-top:18px;
-    display:flex;align-items:center;gap:8px;
+    margin-top:18px;display:flex;align-items:center;gap:8px;
     font-size:13px;color:var(--wood);
   }
   .room-count b{font-size:18px;color:var(--wood-dark);}
-  .door-arrow{
-    margin-left:auto;
-    font-size:20px;
-    transition:transform .25s ease;
-  }
+  .door-arrow{margin-left:auto;font-size:20px;transition:transform .25s ease;}
   .room:hover .door-arrow{transform:translateX(6px);}
-
-  /* 踢脚线 / 底部 */
   .footer-note{
-    margin-top:36px;
-    text-align:center;
-    font-size:13px;color:#8a7358;
-    line-height:1.8;
+    margin-top:36px;text-align:center;
+    font-size:13px;color:#8a7358;line-height:1.8;
+  }
+
+  /* ================= 子房间通用 ================= */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:26px;flex-wrap:wrap;gap:12px;
+  }
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    text-decoration:none;color:var(--wood-dark);
+    background:var(--paper);border:1.5px solid var(--wood-light);
+    border-radius:999px;padding:8px 18px;font-size:14px;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .back:hover{transform:translateX(-4px);box-shadow:0 6px 14px var(--shadow);}
+  .room-label{font-size:12px;letter-spacing:.3em;color:var(--accent);}
+  .head{margin-bottom:28px;}
+  .head h1{
+    font-size:clamp(26px,4.5vw,34px);
+    color:var(--wood-dark);letter-spacing:.1em;margin:6px 0 8px;
+  }
+  .head p{color:#7a6248;font-size:15px;line-height:1.8;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:22px;
+  }
+  .card{
+    background:var(--paper);
+    border:1.5px solid var(--wood-light);
+    border-radius:18px;padding:24px 22px;
+    text-decoration:none;color:var(--ink);
+    box-shadow:0 8px 20px var(--shadow);
+    transition:transform .25s ease, box-shadow .25s ease;
+    display:flex;flex-direction:column;gap:12px;
+    position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 16px 30px var(--shadow);}
+  .card-top{display:flex;align-items:center;gap:14px;}
+  .card-icon{
+    width:52px;height:52px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:#f6e3d2;flex-shrink:0;
+  }
+  .card-title{font-size:18px;font-weight:700;color:var(--wood-dark);}
+  .card-sub{font-size:12px;color:#9a7f63;word-break:break-all;}
+  .card-desc{font-size:14px;line-height:1.75;color:#6b5742;flex:1;}
+  .card-cta{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;color:var(--accent);
+  }
+  .card:hover .card-cta{gap:10px;}
+  .card-cta span{transition:margin-left .2s ease;}
+
+  /* 置顶卡片 */
+  .card.pinned{
+    border-color:var(--accent);
+    background:linear-gradient(160deg, #fff3e6 0%, var(--paper) 55%);
+  }
+  .pin-badge{
+    position:absolute;top:14px;right:16px;
+    font-size:11px;letter-spacing:.15em;color:#fff;
+    background:var(--accent);border-radius:999px;padding:3px 10px;
+  }
+
+  /* ================= 书房配色 ================= */
+  #view-study{
+    background:
+      radial-gradient(circle at 15% 10%, #fbf6e6 0, transparent 40%),
+      radial-gradient(circle at 85% 90%, #e6e9d6 0, transparent 45%);
+    border-radius:24px;
+  }
+  #view-study .back{
+    color:var(--study-dark);background:var(--study-paper);
+    border-color:var(--study-light);
+  }
+  #view-study .room-label{color:var(--study-accent);}
+  #view-study .head h1{color:var(--study-dark);}
+  #view-study .head p{color:#667052;}
+  #view-study .card{
+    background:var(--study-paper);border-color:var(--study-light);
+    box-shadow:0 8px 20px var(--study-shadow);
+  }
+  #view-study .card-icon{background:#e3ead9;}
+  #view-study .card-title{color:var(--study-dark);}
+  #view-study .card-sub{color:#8b9371;}
+  #view-study .card-desc{color:#5d6348;}
+  #view-study .card-cta{color:var(--study-accent);}
+  .shelf{
+    margin-top:34px;border-top:1.5px dashed var(--study-light);
+    padding-top:18px;text-align:center;font-size:13px;
+    color:#7a8260;line-height:1.8;
   }
 </style>
 </head>
 <body>
 
-<div class="house">
-  <div class="roof">
-    <div class="gable">My Little Home</div>
-    <h1 class="house-title">Lucas 的小屋</h1>
-    <p class="house-sub">推门进去，一边办公，一边读书。</p>
-  </div>
+<!-- ============ 视图：玄关 ============ -->
+<section class="view active" id="view-home">
+  <div class="house">
+    <div class="roof">
+      <div class="gable">My Little Home</div>
+      <h1 class="house-title">Lucas 的小屋</h1>
+      <p class="house-sub">推门进去，一边办公，一边读书。</p>
+    </div>
 
-  <div class="floor">
-    <!-- 办公室 -->
-    <div class="room office">
-      <a class="room-link" href="./office.html" aria-label="进入办公室"></a>
-      <div class="room-body">
+    <div class="floor">
+      <!-- 办公室 -->
+      <a class="room office" href="#/office">
         <div class="room-icon">🏢</div>
         <span class="room-tag">WORK</span>
         <h2 class="room-name">办公室</h2>
@@ -180,13 +229,10 @@
           <b>8</b> 件工具（2 件置顶）
           <span class="door-arrow">→</span>
         </div>
-      </div>
-    </div>
+      </a>
 
-    <!-- 书房 -->
-    <div class="room study">
-      <a class="room-link" href="./study.html" aria-label="进入书房"></a>
-      <div class="room-body">
+      <!-- 书房 -->
+      <a class="room study" href="#/study">
         <div class="room-icon">📚</div>
         <span class="room-tag">READ &amp; THINK</span>
         <h2 class="room-name">书房</h2>
@@ -198,21 +244,204 @@
           <b>3</b> 册笔记
           <span class="door-arrow">→</span>
         </div>
-      </div>
+      </a>
     </div>
-  </div>
 
-  <p class="footer-note">小屋一共两间：左边是办公室，右边是书房。点击门即可进入。</p>
-</div>
+    <p class="footer-note">小屋一共两间：左边是办公室，右边是书房。点击门即可进入。</p>
+  </div>
+</section>
+
+<!-- ============ 视图：办公室 ============ -->
+<section class="view" id="view-office">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="#/home">← 回到大门</a>
+      <span class="room-label">OFFICE · 办公室</span>
+    </div>
+
+    <div class="head">
+      <h1>🏢 办公室</h1>
+      <p>日常经手的承保测算、计算器、思路导图与各版本理赔处理工具，共 8 件；前两件为置顶常用工具，点击卡片在新窗口打开。</p>
+    </div>
+
+    <div class="grid">
+
+      <a class="card pinned" href="https://lucas817-art.github.io/casemanager/" target="_blank" rel="noopener">
+        <span class="pin-badge">置顶</span>
+        <div class="card-top">
+          <div class="card-icon">🗂️</div>
+          <div>
+            <div class="card-title">案件管理</div>
+            <div class="card-sub">casemanager</div>
+          </div>
+        </div>
+        <p class="card-desc">在手案件台账与进度跟踪，集中登记、归类并推进各项赔案与工作事项。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+      <a class="card pinned" href="https://lucas817-art.github.io/todolist/" target="_blank" rel="noopener">
+        <span class="pin-badge">置顶</span>
+        <div class="card-top">
+          <div class="card-icon">📝</div>
+          <div>
+            <div class="card-title">待办清单</div>
+            <div class="card-sub">todolist</div>
+          </div>
+        </div>
+        <p class="card-desc">待办事项清单，安排当日与近期需要跟进、落实的任务，逐项销项。</p>
+        <div class="card-cta">打开清单 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/ecacovereddeferredpayment/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">📐</div>
+          <div>
+            <div class="card-title">ECA 承保延期付款测算</div>
+            <div class="card-sub">ecacovereddeferredpayment</div>
+          </div>
+        </div>
+        <p class="card-desc">延期付款结构下的 ECA 承保测算，梳理付款节奏、承保条件与相关费用。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/ecacoveredloancalculator/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">🧮</div>
+          <div>
+            <div class="card-title">ECA 承保贷款计算器</div>
+            <div class="card-sub">ecacoveredloancalculator</div>
+          </div>
+        </div>
+        <p class="card-desc">承保贷款方案与融资条件测算，输入金额、期限与利率后快速对照结果。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/chanpinsiweidaotu/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">🗺️</div>
+          <div>
+            <div class="card-title">产品思路导图</div>
+            <div class="card-sub">chanpinsiweidaotu</div>
+          </div>
+        </div>
+        <p class="card-desc">产品逻辑与展业思路的可视化梳理图，便于复盘与对外讲解。</p>
+        <div class="card-cta">打开导图 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/4.0-claim-handler/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">📋</div>
+          <div>
+            <div class="card-title">理赔处理工具 4.0</div>
+            <div class="card-sub">4.0-claim-handler</div>
+          </div>
+        </div>
+        <p class="card-desc">4.0 版本理赔处理工作台，用于赔案材料整理、流程推进与记录闭环。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/3.0-claim-handler/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">📋</div>
+          <div>
+            <div class="card-title">理赔处理工具 3.0</div>
+            <div class="card-sub">3.0-claim-handler</div>
+          </div>
+        </div>
+        <p class="card-desc">3.0 版本理赔处理工作台，历史版本留存，方便对照与旧案调用。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/SSE-claim-handler/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">📋</div>
+          <div>
+            <div class="card-title">SSE 理赔处理工具</div>
+            <div class="card-sub">SSE-claim-handler</div>
+          </div>
+        </div>
+        <p class="card-desc">面向 SSE 场景的理赔处理工作台，按对应业务口径整理与推进赔案。</p>
+        <div class="card-cta">打开工具 <span>→</span></div>
+      </a>
+
+    </div>
+
+    <p class="footer-note">办公室的门随时开着；看完回到玄关，再去书房坐坐。</p>
+  </div>
+</section>
+
+<!-- ============ 视图：书房 ============ -->
+<section class="view" id="view-study">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="#/home">← 回到大门</a>
+      <span class="room-label">STUDY · 书房</span>
+    </div>
+
+    <div class="head">
+      <h1>📚 书房</h1>
+      <p>古文品读与专题对比笔记，共 3 册，点击卡片在新窗口打开。</p>
+    </div>
+
+    <div class="grid">
+
+      <a class="card" href="https://lucas817-art.github.io/tengwanggexu/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">🏯</div>
+          <div>
+            <div class="card-title">《滕王阁序》</div>
+            <div class="card-sub">tengwanggexu</div>
+          </div>
+        </div>
+        <p class="card-desc">王勃名篇逐句品读，配文释义与配图，便于通读、背诵与讲解。</p>
+        <div class="card-cta">翻开笔记 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/yantielun/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">📜</div>
+          <div>
+            <div class="card-title">《盐铁论》</div>
+            <div class="card-sub">yantielun</div>
+          </div>
+        </div>
+        <p class="card-desc">汉代桓宽政论典籍的阅读整理，围绕盐铁会议的论辩脉络展开。</p>
+        <div class="card-cta">翻开笔记 <span>→</span></div>
+      </a>
+
+      <a class="card" href="https://lucas817-art.github.io/comparepubliccorporatefinance/" target="_blank" rel="noopener">
+        <div class="card-top">
+          <div class="card-icon">⚖️</div>
+          <div>
+            <div class="card-title">公私融资对比</div>
+            <div class="card-sub">comparepubliccorporatefinance</div>
+          </div>
+        </div>
+        <p class="card-desc">公共部门融资与企业融资的横向梳理，对比口径、结构与关注要点。</p>
+        <div class="card-cta">翻开笔记 <span>→</span></div>
+      </a>
+
+    </div>
+
+    <p class="shelf">书房临窗，光线安静；读完沿原路返回玄关即可。</p>
+  </div>
+</section>
 
 <script>
-  // 兜底跳转：防止部分内置浏览器拦截锚点默认行为
-  document.querySelectorAll('.room-link').forEach(function(link){
-    link.addEventListener('click', function(e){
-      e.preventDefault();
-      window.location.assign(link.getAttribute('href'));
-    });
-  });
+  // hash 路由：#/home 玄关，#/office 办公室，#/study 书房
+  (function(){
+    var viewMap = {home:'view-home', office:'view-office', study:'view-study'};
+    function route(){
+      var hash = location.hash.replace(/^#\/?/, '');
+      var key = viewMap[hash] ? hash : 'home';
+      Object.keys(viewMap).forEach(function(k){
+        document.getElementById(viewMap[k]).classList.toggle('active', k === key);
+      });
+      window.scrollTo(0, 0);
+    }
+    window.addEventListener('hashchange', route);
+    route();
+  })();
 </script>
 
 </body>
