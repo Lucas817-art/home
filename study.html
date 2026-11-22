@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>书房 · Lucas 的小屋</title>
+<style>
+  :root{
+    --wall:#f1eee2;
+    --paper:#fbf8ef;
+    --wood:#6f7a52;
+    --wood-light:#a3ab7f;
+    --wood-dark:#43502e;
+    --ink:#33301f;
+    --accent:#7a8b4f;
+    --shadow:rgba(67,80,46,.22);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    min-height:100vh;
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 15% 10%, #fbf6e6 0, transparent 40%),
+      radial-gradient(circle at 85% 90%, #e6e9d6 0, transparent 45%),
+      var(--wall);
+    color:var(--ink);
+    padding:28px 20px 48px;
+  }
+  .wrap{max-width:960px;margin:0 auto;}
+
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:26px;flex-wrap:wrap;gap:12px;
+  }
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    text-decoration:none;color:var(--wood-dark);
+    background:var(--paper);border:1.5px solid var(--wood-light);
+    border-radius:999px;padding:8px 18px;font-size:14px;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .back:hover{transform:translateX(-4px);box-shadow:0 6px 14px var(--shadow);}
+  .room-label{font-size:12px;letter-spacing:.3em;color:var(--accent);}
+
+  .head{margin-bottom:28px;}
+  .head h1{
+    font-size:clamp(26px,4.5vw,34px);
+    color:var(--wood-dark);letter-spacing:.1em;margin:6px 0 8px;
+  }
+  .head p{color:#667052;font-size:15px;line-height:1.8;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:22px;
+  }
+  .card{
+    background:var(--paper);
+    border:1.5px solid var(--wood-light);
+    border-radius:18px;
+    padding:24px 22px;
+    text-decoration:none;color:var(--ink);
+    box-shadow:0 8px 20px var(--shadow);
+    transition:transform .25s ease, box-shadow .25s ease;
+    display:flex;flex-direction:column;gap:12px;
+    position:relative;overflow:hidden;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 16px 30px var(--shadow);}
+  .card-top{display:flex;align-items:center;gap:14px;}
+  .card-icon{
+    width:52px;height:52px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:#e3ead9;flex-shrink:0;
+  }
+  .card-title{font-size:18px;font-weight:700;color:var(--wood-dark);}
+  .card-sub{font-size:12px;color:#8b9371;word-break:break-all;}
+  .card-desc{font-size:14px;line-height:1.75;color:#5d6348;flex:1;}
+  .card-cta{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:13px;color:var(--accent);
+  }
+  .card:hover .card-cta{gap:10px;}
+
+  /* 书架装饰条 */
+  .shelf{
+    margin-top:34px;
+    border-top:1.5px dashed var(--wood-light);
+    padding-top:18px;
+    text-align:center;font-size:13px;color:#7a8260;line-height:1.8;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="back" href="index.html">← 回到大门</a>
+    <span class="room-label">STUDY · 书房</span>
+  </div>
+
+  <div class="head">
+    <h1>📚 书房</h1>
+    <p>古文品读与专题对比笔记，共 3 册，点击卡片在新窗口打开。</p>
+  </div>
+
+  <div class="grid">
+
+    <a class="card" href="https://lucas817-art.github.io/tengwanggexu/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon">🏯</div>
+        <div>
+          <div class="card-title">《滕王阁序》</div>
+          <div class="card-sub">tengwanggexu</div>
+        </div>
+      </div>
+      <p class="card-desc">王勃名篇逐句品读，配文释义与配图，便于通读、背诵与讲解。</p>
+      <div class="card-cta">翻开笔记 <span>→</span></div>
+    </a>
+
+    <a class="card" href="https://lucas817-art.github.io/yantielun/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon">📜</div>
+        <div>
+          <div class="card-title">《盐铁论》</div>
+          <div class="card-sub">yantielun</div>
+        </div>
+      </div>
+      <p class="card-desc">汉代桓宽政论典籍的阅读整理，围绕盐铁会议的论辩脉络展开。</p>
+      <div class="card-cta">翻开笔记 <span>→</span></div>
+    </a>
+
+    <a class="card" href="https://lucas817-art.github.io/comparepubliccorporatefinance/" target="_blank" rel="noopener">
+      <div class="card-top">
+        <div class="card-icon">⚖️</div>
+        <div>
+          <div class="card-title">公私融资对比</div>
+          <div class="card-sub">comparepubliccorporatefinance</div>
+        </div>
+      </div>
+      <p class="card-desc">公共部门融资与企业融资的横向梳理，对比口径、结构与关注要点。</p>
+      <div class="card-cta">翻开笔记 <span>→</span></div>
+    </a>
+
+  </div>
+
+  <p class="shelf">书房临窗，光线安静；读完沿原路返回玄关即可。</p>
+</div>
+</body>
+</html>
