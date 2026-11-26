@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>掉期年化成本 · 循序渐进互动课</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap">
+<style>
+  :root{
+    --navy:#13294b; --navy2:#1f3d6b; --gold:#c9a24b; --bg:#f4f6fa;
+    --card:#ffffff; --ink:#1d2b3f; --sub:#5b6b82; --line:#e3e9f2;
+    --green:#1f9d6b; --red:#d9534f; --blue:#2f6db3; --soft:#eef3fb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px 120px}
+
+  /* 顶部 */
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;padding:28px 16px 22px}
+  header .inner{max-width:860px;margin:0 auto}
+  header h1{font-size:22px;font-weight:900;letter-spacing:.5px}
+  header p{margin-top:6px;font-size:13.5px;opacity:.85}
+  .score-pill{display:inline-flex;gap:8px;align-items:center;margin-top:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:6px 14px;border-radius:999px;font-size:13px}
+  .score-pill b{color:var(--gold)}
+
+  /* 进度条 */
+  .progress{position:sticky;top:0;z-index:20;background:var(--bg);padding:12px 0 8px}
+  .bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:999px;transition:width .4s}
+  .bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:6px}
+
+  /* 关卡 */
+  .step{display:none;animation:fade .35s}
+  .step.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .tag{display:inline-block;background:var(--soft);color:var(--blue);font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;margin-bottom:10px}
+  h2{font-size:20px;font-weight:900;margin:6px 0 12px}
+  h3{font-size:15.5px;font-weight:700;margin:16px 0 8px;color:var(--navy)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 2px 10px rgba(19,41,75,.05)}
+  .lead{font-size:15px}
+  .muted{color:var(--sub);font-size:13.5px}
+  ul.bul{margin:8px 0 0 18px}
+  ul.bul li{margin:7px 0;font-size:14.5px}
+  .hl{color:var(--blue);font-weight:700}
+  .hl-g{color:var(--gold);font-weight:700}
+  .hl-r{color:var(--red);font-weight:700}
+
+  /* 公式块 */
+  .formula{background:var(--navy);color:#fff;border-radius:14px;padding:18px;text-align:center;margin:14px 0}
+  .formula .big{font-size:19px;font-weight:700;letter-spacing:.3px}
+  .formula .small{font-size:12.5px;opacity:.8;margin-top:6px}
+  .formula em{color:var(--gold);font-style:normal}
+
+  /* 按钮 */
+  .btn{display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;padding:12px 22px;border-radius:12px;transition:.15s}
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-ghost{background:var(--soft);color:var(--navy)}
+  .btn-row{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+
+  /* 概念卡翻转 */
+  .flip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .flip{perspective:900px;height:130px;cursor:pointer}
+  .flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+  .flip.flipped .flip-inner{transform:rotateY(180deg)}
+  .flip-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+  .flip-front{background:var(--soft);color:var(--navy);font-weight:700;font-size:15px}
+  .flip-back{background:var(--card);border:1px solid var(--line);transform:rotateY(180deg);font-size:12.5px;color:var(--sub)}
+  .flip-back b{color:var(--ink);font-size:13.5px}
+
+  /* 选择题 */
+  .opt{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:13px 15px;margin:10px 0;cursor:pointer;font-family:inherit;font-size:14.5px;transition:.15s}
+  .opt:hover{border-color:var(--blue)}
+  .opt.correct{border-color:var(--green);background:#ecf8f2}
+  .opt.wrong{border-color:var(--red);background:#fdf0f0}
+  .opt:disabled{cursor:default}
+  .feedback{margin-top:10px;font-size:13.5px;padding:10px 12px;border-radius:10px;display:none}
+  .feedback.ok{display:block;background:#ecf8f2;color:var(--green)}
+  .feedback.no{display:block;background:#fdf0f0;color:var(--red)}
+
+  /* 计算器 */
+  .calc-row{display:flex;flex-direction:column;gap:6px;margin:14px 0}
+  .calc-row label{font-size:13.5px;font-weight:700;color:var(--navy)}
+  .calc-row input,.calc-row select{font-family:inherit;font-size:16px;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .calc-row input:focus{outline:none;border-color:var(--blue)}
+  .calc-out{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .out-box{background:var(--soft);border-radius:14px;padding:16px;text-align:center}
+  .out-box .num{font-size:26px;font-weight:900;color:var(--navy)}
+  .out-box .cap{font-size:12px;color:var(--sub);margin-top:4px}
+  .out-box.gold .num{color:var(--gold)}
+
+  /* 对照表（分条，不用表格） */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .compare .cc{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fff}
+  .compare .cc h4{font-size:14px;margin-bottom:8px}
+  .compare .cc p{font-size:13px;color:var(--sub)}
+
+  /* 进度圆点 */
+  .dots{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+  .dots span{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .dots span.on{background:var(--gold)}
+
+  /* 撒花 */
+  .confetti{position:fixed;top:-10px;font-size:20px;z-index:99;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.8}}
+
+  .tip{border-left:3px solid var(--gold);background:#fdf9ef;padding:12px 14px;border-radius:0 12px 12px 0;font-size:13.5px;margin:12px 0}
+  .story{background:linear-gradient(135deg,#fff8ec,#fff);border:1px solid #f0e2bd;border-radius:16px;padding:18px}
+  .story .who{font-weight:700;color:var(--gold)}
+  @media(max-width:560px){
+    .flip-grid{grid-template-columns:1fr}
+    .calc-out,.compare{grid-template-columns:1fr}
+    header h1{font-size:19px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <h1>💱 掉期年化成本 · 从零搞懂</h1>
+    <p>从一张隐含利率曲线表，到 ECA 计算器里那个 3.00%，一步步拆给你看</p>
+    <div class="score-pill">⭐ 当前得分 <b id="score">0</b> 分 · 关卡 <b id="stepNow">1</b>/7</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="progress">
+    <div class="bar"><i id="bar"></i></div>
+    <div class="bar-label"><span>入门故事</span><span>闯关测验</span></div>
+  </div>
+
+  <!-- ============ 第 1 站：故事背景 ============ -->
+  <section class="step active" data-step="1">
+    <span class="tag">第 1 站 · 先把场景讲清楚</span>
+    <h2>你是一家出口商，3 年后才收到美元</h2>
+    <div class="story">
+      <p class="lead">假设你签了一笔出口合同：买方<span class="hl-g">延期 3 年付款</span>，到期付给你 <span class="hl">$4.25M（425 万美元）</span>。</p>
+      <ul class="bul" style="margin-top:10px">
+        <li>你在中国，日常开销、发工资、买原料用的是<span class="hl">人民币</span>。</li>
+        <li>3 年后拿到美元，你要换成人民币才能用。</li>
+        <li>万一这 3 年<span class="hl-r">人民币升值、美元贬值</span>，同样的美元换回来的人民币就变少了——这就是你担心的风险。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>那怎么把这个风险锁住？</h3>
+      <p class="muted">你可以现在就和银行约定：3 年后按一个<span class="hl">事先定好的汇率</span>把美元卖给银行、换回人民币。这笔约定就叫<span class="hl">远期结汇</span>；而银行报给你的这个"未来汇率"，和今天的汇率之间的差价，就是<span class="hl-g">掉期点</span>。</p>
+      <div class="tip">🎯 本堂课目标：看懂掉期点，再把它换算成一个<span class="hl">每年百分之几</span>的成本——也就是计算器里的"掉期年化成本"。</div>
+    </div>
+    <div class="btn-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="go(2)">下一站：认识三个汇率概念 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 2 站：三个概念 ============ -->
+  <section class="step" data-step="2">
+    <span class="tag">第 2 站 · 概念扫盲（点卡片翻面）</span>
+    <h2>即期汇率、远期汇率、掉期点</h2>
+    <p class="muted">先点下面三张卡片，把定义翻出来看一遍，然后玩一个配对小测。</p>
+    <div class="flip-grid">
+      <div class="flip" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">即期汇率 S</div>
+          <div class="flip-face flip-back"><b>今天就能成交的汇率</b><br>比如现在 1 美元换 6.6933 元人民币。</div>
+        </div>
+      </div>
+      <div class="flip" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">远期汇率 F</div>
+          <div class="flip-face flip-back"><b>现在约定、未来交割的汇率</b><br>比如约定 3 年后按某个汇率结汇。</div>
+        </div>
+      </div>
+      <div class="flip" onclick="this.classList.toggle('flipped')">
+        <div class="flip-inner">
+          <div class="flip-face flip-front">掉期点</div>
+          <div class="flip-face flip-back"><b>远期 − 即期 的差价</b><br>掉期点 = F − S，单位是 pips。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h3>🎮 小游戏 1：选一选</h3>
+      <p class="muted">下面哪句话，是在说"掉期点"？</p>
+      <div id="q1"></div>
+      <div class="feedback" id="fb1"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(1)">← 上一站</button>
+      <button class="btn btn-primary" id="to3" onclick="go(3)" disabled>下一站：pips 是什么 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 3 站：pips ============ -->
+  <section class="step" data-step="3">
+    <span class="tag">第 3 站 · 单位换算</span>
+    <h2>pips（点）到底是多大？</h2>
+    <div class="card">
+      <p class="lead">USD/CNY 这种汇率，报价保留 4 位小数。市场约定：</p>
+      <div class="formula">
+        <div class="big">1 pip = <em>0.0001</em> 元人民币</div>
+        <div class="small">所以把"点数"换算成人民币差价，要除以 10000</div>
+      </div>
+      <ul class="bul">
+        <li>−5.35 pips = −0.000535</li>
+        <li>−2023.50 pips = −0.202350</li>
+        <li>−6020 pips = <span class="hl-r">−0.6020</span>（本堂课的主角）</li>
+      </ul>
+      <div class="tip">📌 负号的含义：远期美元比即期<span class="hl-r">更便宜</span>，也就是市场预期人民币升值方向。对未来要收美元的出口商来说，这是一笔汇率损失。</div>
+    </div>
+
+    <div class="card">
+      <h3>🎮 小游戏 2：换算小达人</h3>
+      <p class="muted">−3055 pips 等于多少元人民币？</p>
+      <div id="q2"></div>
+      <div class="feedback" id="fb2"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(2)">← 上一站</button>
+      <button class="btn btn-primary" id="to4" onclick="go(4)" disabled>下一站：年化公式 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 4 站：年化公式 ============ -->
+  <section class="step" data-step="4">
+    <span class="tag">第 4 站 · 核心公式</span>
+    <h2>把一笔总差价，摊成每年的成本</h2>
+    <p class="lead">掉期点是整个期限下来的<span class="hl">总差价</span>。但评估融资成本时，大家习惯看<span class="hl">每年百分之几</span>，所以要做两步摊薄：</p>
+
+    <div class="card">
+      <h3>第一步：掉期点换算成人民币差价（除以 10000）</h3>
+      <div class="formula">
+        <div class="big">差价 = 掉期点(pips) ÷ <em>10000</em></div>
+      </div>
+      <h3>第二步：除以"本金汇率"和"年限"，得到年化</h3>
+      <div class="formula">
+        <div class="big">掉期年化成本 = |差价| ÷ ( <em>S</em> × <em>t</em> )</div>
+        <div class="small">S = 即期汇率　·　t = 期限（年）　·　取绝对值是为了把"损失"讲成正的成本数</div>
+      </div>
+      <ul class="bul">
+        <li>除以 S：差价是"人民币/美元"，要折成占美元本金的百分比。</li>
+        <li>除以 t：把整个期限的总损失，平均到每一年。</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🎮 小游戏 3：互动计算器（拖一拖、算一算）</h3>
+      <p class="muted">默认填入图2 那笔业务：即期 6.6933、掉期点 −6020、期限 36 个月。你可以改数字，看年化怎么变。</p>
+      <div class="calc-row">
+        <label>即期汇率 S</label>
+        <input type="number" id="inS" step="0.0001" value="6.6933">
+      </div>
+      <div class="calc-row">
+        <label>掉期点（pips）</label>
+        <input type="number" id="inP" step="1" value="-6020">
+      </div>
+      <div class="calc-row">
+        <label>期限（月）</label>
+        <input type="number" id="inM" step="1" value="36">
+      </div>
+      <div class="calc-out">
+        <div class="out-box gold">
+          <div class="num" id="outYear">—</div>
+          <div class="cap">掉期年化成本（% / 年）</div>
+        </div>
+        <div class="out-box">
+          <div class="num" id="outTotal">—</div>
+          <div class="cap">全期限累计损失占本金（%）</div>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:10px">💡 累计损失比例 = |差价| ÷ S，<span class="hl">不再除年限</span>；年化成本 = 累计比例 ÷ 年限。两个数别混。</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(3)">← 上一站</button>
+      <button class="btn btn-primary" onclick="go(5)">下一站：复刻图2 的 3.00% →</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 5 站：复刻图2 ============ -->
+  <section class="step" data-step="5">
+    <span class="tag">第 5 站 · 实战复盘</span>
+    <h2>一步一步复现计算器里的 3.00%</h2>
+    <div class="card">
+      <p class="muted">图2 计算器左侧填的是：人民币掉期点 −6020 pips，掉期期限 36 个月；当时实时即期 USD/CNY = 6.6933。我们来拆：</p>
+      <ul class="bul">
+        <li><b>① 点数转差价：</b>−6020 ÷ 10000 = <span class="hl-r">−0.6020</span></li>
+        <li><b>② 年限：</b>36 个月 = <span class="hl">3 年</span></li>
+        <li><b>③ 年化：</b>0.6020 ÷ (6.6933 × 3) = 0.6020 ÷ 20.0799 ≈ <span class="hl-g">2.998% ≈ 3.00%</span> ✅</li>
+        <li><b>④ 累计损失：</b>0.6020 ÷ 6.6933 ≈ <span class="hl-g">8.99%</span>，和图2"占延期本金 8.99%"对上。</li>
+      </ul>
+      <div class="tip">🔍 为什么图1 表里还有一列"隐含利率"？那是市场用利率平价反推的美元利率，是<span class="muted">理论口径</span>；而图2 计算器走的是上面这个<span class="hl">掉期点直接年化</span>的业务口径，ECA 报价、成本测算基本都用后者，一眼就能看出每年汇率损失几个点。</div>
+    </div>
+
+    <div class="card">
+      <h3>🎮 小游戏 4：口算验证</h3>
+      <p class="muted">如果这笔业务改成 1 年期，即期 6.6739，掉期点 −2023.50 pips，年化大约是多少？</p>
+      <div id="q3"></div>
+      <div class="feedback" id="fb3"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(4)">← 上一站</button>
+      <button class="btn btn-primary" onclick="go(6)">下一站：两种口径对比 →</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 6 站：口径对比 ============ -->
+  <section class="step" data-step="6">
+    <span class="tag">第 6 站 · 容易绕晕的地方</span>
+    <h2>两套口径，别混用</h2>
+    <div class="compare">
+      <div class="cc">
+        <h4>口径 A：掉期点直接年化（图2 计算器用的）</h4>
+        <p>年化成本 = |掉期点差价| ÷ (S × t)<br>优点：简单直观，业务报价、ECA 测算常用；直接从掉期点出发，不依赖两种货币的挂牌利率。</p>
+      </div>
+      <div class="cc">
+        <h4>口径 B：利率差（理论无套利）</h4>
+        <p>掉期成本 ≈ 人民币利率 − 美元利率<br>来自利率平价 F = S×(1+r₁t)/(1+r₂t)；用于理解掉期点"为什么会是这个数"，但实际测算时图2 并不直接套 Shibor。</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h3>一句话记忆</h3>
+      <p class="lead">看<span class="hl">报价单/计算器</span>里的年化成本 → 用口径 A；想理解<span class="hl">掉期点的成因</span> → 想口径 B。本堂课你只要把口径 A 练熟，工作里就够用了。</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(5)">← 上一站</button>
+      <button class="btn btn-primary" onclick="go(7)">进入闯关测验 🏁</button>
+    </div>
+  </section>
+
+  <!-- ============ 第 7 站：测验 ============ -->
+  <section class="step" data-step="7">
+    <span class="tag">第 7 站 · 终极闯关</span>
+    <h2>5 道题，检验你是否真的懂了</h2>
+    <div id="quiz"></div>
+    <div class="card" id="resultCard" style="display:none;text-align:center">
+      <div style="font-size:40px" id="resEmoji">🎉</div>
+      <h2 id="resTitle"></h2>
+      <p class="muted" id="resDesc"></p>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="restart()">再玩一遍 ↻</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------- 状态 ---------- */
+let score = 0;
+const TOTAL = 7;
+
+function go(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
+  document.getElementById('stepNow').textContent = n;
+  document.getElementById('bar').style.width = ((n-1)/(TOTAL-1)*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function addScore(v){ score += v; document.getElementById('score').textContent = score; }
+
+/* ---------- 小游戏 1 ---------- */
+const q1 = [
+  {t:"今天市场上 1 美元能换多少人民币", ok:false},
+  {t:"现在约定、3 年后交割时用的那个汇率", ok:false},
+  {t:"远期汇率减去即期汇率，得到的差价（单位 pips）", ok:true}
+];
+renderOpts('q1','fb1',q1,10,()=>{document.getElementById('to3').disabled=false;});
+
+/* ---------- 小游戏 2 ---------- */
+const q2 = [
+  {t:"−0.3055", ok:true},
+  {t:"−3.055", ok:false},
+  {t:"−0.03055", ok:false}
+];
+renderOpts('q2','fb2',q2,10,()=>{document.getElementById('to4').disabled=false;});
+
+/* ---------- 小游戏 3：计算器 ---------- */
+function calc(){
+  const S = parseFloat(document.getElementById('inS').value)||0;
+  const P = parseFloat(document.getElementById('inP').value)||0;
+  const M = parseFloat(document.getElementById('inM').value)||0;
+  const t = M/12;
+  const diff = Math.abs(P)/10000;
+  if(S<=0||t<=0){document.getElementById('outYear').textContent='—';document.getElementById('outTotal').textContent='—';return;}
+  const total = diff/S*100;
+  const year = total/t;
+  document.getElementById('outYear').textContent = year.toFixed(2)+'%';
+  document.getElementById('outTotal').textContent = total.toFixed(2)+'%';
+}
+['inS','inP','inM'].forEach(id=>document.getElementById(id).addEventListener('input',calc));
+calc();
+
+/* ---------- 小游戏 4 ---------- */
+const q3 = [
+  {t:"约 3.03%", ok:true},
+  {t:"约 1.42%", ok:false},
+  {t:"约 4.50%", ok:false}
+];
+renderOpts('q3','fb3',q3,10,null);
+
+/* ---------- 选择题渲染通用 ---------- */
+function renderOpts(boxId,fbId,opts,points,onDone){
+  const box = document.getElementById(boxId);
+  box.innerHTML='';
+  opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o.t;
+    b.onclick=()=>{
+      [...box.children].forEach(c=>c.disabled=true);
+      if(o.ok){b.classList.add('correct');addScore(points);showFb(fbId,true,'✅ 答对了！+'+points+' 分');onDone&&onDone();}
+      else{b.classList.add('wrong');showFb(fbId,false,'❌ 再想想，正确答案已标绿。');
+        [...box.children].forEach((c,idx)=>{if(opts[idx].ok)c.classList.add('correct');});}
+    };
+    box.appendChild(b);
+  });
+}
+function showFb(id,ok,msg){const f=document.getElementById(id);f.className='feedback '+(ok?'ok':'no');f.textContent=msg;}
+
+/* ---------- 终极测验 ---------- */
+const quiz = [
+  {q:"1 个 pip 等于多少人民币？",o:["0.0001","0.01","0.1"],a:0,exp:"汇率保留 4 位小数，1 pip = 0.0001，换算差价要除以 10000。"},
+  {q:"掉期点为负数，通常说明？",o:["远期美元比即期更便宜，人民币升值方向","远期美元比即期更贵","和汇率方向无关"],a:0,exp:"负掉期点 = 远期贴水，美元未来换得更少人民币；对收美元的出口商是损失。"},
+  {q:"掉期年化成本（业务口径）的公式是？",o:["|掉期点差价| ÷ (S × t)","掉期点差价 × S × t","人民币利率 + 美元利率"],a:0,exp:"先把 pips 除以 10000 得到差价，再除以即期汇率 S 和年限 t。"},
+  {q:"S=6.6933、−6020 pips、3 年，年化成本最接近？",o:["3.00%","8.99%","4.53%"],a:0,exp:"0.6020 ÷ (6.6933×3) ≈ 2.998% ≈ 3.00%；8.99% 是不除年限的累计损失比例。"},
+  {q:"累计损失占本金比例怎么算？",o:["|差价| ÷ S","|差价| ÷ (S × t)","|差价| ÷ t"],a:0,exp:"累计比例只除以即期汇率 S；要变成年化，才再除以年限 t。"}
+];
+let qi=0, qScore=0;
+
+function renderQuiz(){
+  const box=document.getElementById('quiz');
+  if(qi>=quiz.length){finishQuiz();return;}
+  const item=quiz[qi];
+  box.innerHTML=`
+    <div class="card">
+      <h3>第 ${qi+1} / ${quiz.length} 题</h3>
+      <p class="lead" style="margin:8px 0">${item.q}</p>
+      <div id="qo"></div>
+      <div class="feedback" id="qfb"></div>
+    </div>`;
+  const ob=document.getElementById('qo');
+  item.o.forEach((t,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+t;
+    b.onclick=()=>{
+      [...ob.children].forEach(c=>c.disabled=true);
+      if(i===item.a){b.classList.add('correct');qScore++;addScore(5);showFb('qfb',true,'✅ 正确！'+item.exp);}
+      else{b.classList.add('wrong');showFb('qfb',false,'❌ '+item.exp);ob.children[item.a].classList.add('correct');}
+      setTimeout(()=>{qi++;renderQuiz();},1400);
+    };
+    ob.appendChild(b);
+  });
+}
+function finishQuiz(){
+  document.getElementById('quiz').style.display='none';
+  const rc=document.getElementById('resultCard');rc.style.display='block';
+  const pct=qScore/quiz.length;
+  const emo=document.getElementById('resEmoji'),title=document.getElementById('resTitle'),desc=document.getElementById('resDesc');
+  if(pct===1){emo.textContent='🏆';title.textContent='满分！你已经出师了';desc.textContent='5 题全对，掉期年化成本的口径和公式都拿捏住了。';confetti();}
+  else if(pct>=0.6){emo.textContent='🎉';title.textContent='不错，基本懂了';desc.textContent=`答对 ${qScore}/5 题，回看第 4、5 站把公式再巩固一下。`;}
+  else{emo.textContent='📖';title.textContent='再回去顺一遍';desc.textContent=`答对 ${qScore}/5 题，建议从第 1 站重新走一遍，重点看第 4 站公式。`;}
+  document.getElementById('bar').style.width='100%';
+}
+function restart(){
+  qi=0;qScore=0;score=0;document.getElementById('score').textContent='0';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('resultCard').style.display='none';
+  renderQuiz();go(1);
+}
+renderQuiz();
+
+function confetti(){
+  const em=['🎉','⭐','💛','✅'];
+  for(let i=0;i<30;i++){
+    const s=document.createElement('div');s.className='confetti';
+    s.textContent=em[i%em.length];
+    s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(2+Math.random()*2)+'s';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),4500);
+  }
+}
+</script>
+</body>
+</html>
